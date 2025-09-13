@@ -1,0 +1,11 @@
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\bin\Debug\net9.0\Domain.deps.json
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\bin\Debug\net9.0\Domain.dll
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\bin\Debug\net9.0\Domain.pdb
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\Domain.AssemblyInfoInputs.cache
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\Domain.AssemblyInfo.cs
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\Domain.csproj.CoreCompileInputs.cache
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\Domain.dll
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\refint\Domain.dll
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\Domain.pdb
+D:\flora group\ss\SourcingAndTendering.Clean\src\Domain\obj\Debug\net9.0\ref\Domain.dll
