@@ -1,0 +1,331 @@
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+  <h1 class="h2">Procurement Dashboard</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="btn-group me-2">
+      <button type="button" class="btn btn-sm btn-outline-secondary">
+        Share
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-secondary">
+        Export
+      </button>
+    </div>
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-secondary dropdown-toggle"
+    >
+      <i class="bi bi-calendar3"></i> This month
+    </button>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Quick Actions</h5>
+        <div class="row">
+          <div class="col-md-3 mb-3 mb-md-0">
+            <a href="create-rfx.html" class="btn btn-primary d-block">
+              <i class="bi bi-plus-circle"></i> Create New RFx
+            </a>
+          </div>
+          <div class="col-md-3 mb-3 mb-md-0">
+            <a
+              href="bid-evaluation.html"
+              class="btn btn-outline-primary d-block"
+            >
+              <i class="bi bi-clipboard-check"></i> Evaluate Bids
+            </a>
+          </div>
+          <div class="col-md-3 mb-3 mb-md-0">
+            <a
+              href="supplier-management.html"
+              class="btn btn-outline-primary d-block"
+            >
+              <i class="bi bi-people"></i> Manage Suppliers
+            </a>
+          </div>
+          <div class="col-md-3">
+            <a href="reports.html" class="btn btn-outline-primary d-block">
+              <i class="bi bi-bar-chart"></i> View Reports
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row dashboard-stats mb-4">
+  <div class="col-md-3 mb-4 mb-md-0">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon text-primary">
+          <i class="bi bi-file-earmark-text"></i>
+        </div>
+        <div class="stat-value">24</div>
+        <div class="stat-label">Active Tenders</div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="#" class="text-decoration-none"
+          >View details <i class="bi bi-arrow-right"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4 mb-md-0">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon text-success">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div class="stat-value">18</div>
+        <div class="stat-label">Completed Tenders</div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="#" class="text-decoration-none"
+          >View details <i class="bi bi-arrow-right"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4 mb-md-0">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon text-warning">
+          <i class="bi bi-clock"></i>
+        </div>
+        <div class="stat-value">7</div>
+        <div class="stat-label">Pending Approvals</div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="#" class="text-decoration-none"
+          >View details <i class="bi bi-arrow-right"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon text-info">
+          <i class="bi bi-people"></i>
+        </div>
+        <div class="stat-value">156</div>
+        <div class="stat-label">Active Suppliers</div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="#" class="text-decoration-none"
+          >View details <i class="bi bi-arrow-right"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+  <div class="col-md-6 mb-4 mb-md-0">
+    <div class="card h-100">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="card-title mb-0">Tender Status</h5>
+        <div class="dropdown">
+          <button
+            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            type="button"
+            id="tenderStatusDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            This Year
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="tenderStatusDropdown">
+            <li><a class="dropdown-item" href="#">This Month</a></li>
+            <li><a class="dropdown-item" href="#">This Quarter</a></li>
+            <li><a class="dropdown-item" href="#">This Year</a></li>
+            <li><a class="dropdown-item" href="#">All Time</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="tenderStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="card-title mb-0">Procurement Spend by Category</h5>
+        <div class="dropdown">
+          <button
+            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            type="button"
+            id="spendCategoryDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            This Year
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="spendCategoryDropdown">
+            <li><a class="dropdown-item" href="#">This Month</a></li>
+            <li><a class="dropdown-item" href="#">This Quarter</a></li>
+            <li><a class="dropdown-item" href="#">This Year</a></li>
+            <li><a class="dropdown-item" href="#">All Time</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="spendCategoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Activity and Upcoming Tenders -->
+<div class="row mb-4">
+  <div class="col-md-6 mb-4 mb-md-0">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Recent Activity</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">New bid submitted</h6>
+              <small>3 hours ago</small>
+            </div>
+            <p class="mb-1">
+              Qatar Building Materials Co. submitted a bid for Office Supplies
+              RFQ.
+            </p>
+            <small class="text-muted">Bid #BID-2025-042</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Tender published</h6>
+              <small>Yesterday</small>
+            </div>
+            <p class="mb-1">
+              IT Infrastructure Upgrade RFP has been published.
+            </p>
+            <small class="text-muted">Tender #RFP-2025-018</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Contract awarded</h6>
+              <small>2 days ago</small>
+            </div>
+            <p class="mb-1">
+              Maintenance Services contract awarded to Gulf Technical Services.
+            </p>
+            <small class="text-muted">Contract #CON-2025-031</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Supplier registered</h6>
+              <small>3 days ago</small>
+            </div>
+            <p class="mb-1">
+              New supplier Al Jaber Engineering has completed registration.
+            </p>
+            <small class="text-muted">Supplier #SUP-2025-089</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Tender closed</h6>
+              <small>4 days ago</small>
+            </div>
+            <p class="mb-1">
+              Landscaping Services RFQ bidding period has ended.
+            </p>
+            <small class="text-muted">Tender #RFQ-2025-027</small>
+          </a>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent">
+        <a href="#" class="text-decoration-none"
+          >View all activity <i class="bi bi-arrow-right"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Upcoming Tender Deadlines</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Tender ID</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Deadline</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>RFP-2025-018</td>
+                <td>IT Infrastructure Upgrade</td>
+                <td>RFP</td>
+                <td>May 10, 2025</td>
+                <td><span class="badge bg-primary">Published</span></td>
+              </tr>
+              <tr>
+                <td>RFQ-2025-042</td>
+                <td>Office Supplies</td>
+                <td>RFQ</td>
+                <td>May 5, 2025</td>
+                <td><span class="badge bg-primary">Published</span></td>
+              </tr>
+              <tr>
+                <td>RFI-2025-015</td>
+                <td>Security Services</td>
+                <td>RFI</td>
+                <td>May 3, 2025</td>
+                <td>
+                  <span class="badge bg-warning text-dark">Closing Soon</span>
+                </td>
+              </tr>
+              <tr>
+                <td>RFP-2025-019</td>
+                <td>HVAC Maintenance</td>
+                <td>RFP</td>
+                <td>May 15, 2025</td>
+                <td><span class="badge bg-primary">Published</span></td>
+              </tr>
+              <tr>
+                <td>RFQ-2025-043</td>
+                <td>Cleaning Services</td>
+                <td>RFQ</td>
+                <td>May 8, 2025</td>
+                <td><span class="badge bg-primary">Published</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent">
+        <a href="#" class="text-decoration-none"
+          >View all tenders <i class="bi bi-arrow-right"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+</div>

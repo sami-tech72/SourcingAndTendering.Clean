@@ -1,0 +1,226 @@
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+  <h1 class="h2">RFx Management</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="btn-group me-2">
+      <button type="button" class="btn btn-sm btn-outline-secondary">
+        Export
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-secondary">
+        Print
+      </button>
+    </div>
+    <button
+      type="button"
+      class="btn btn-sm btn-primary"
+      [routerLink]="'/procurement/rfx-management/create'"
+    >
+      <i class="bi bi-plus-circle"></i> Create New RFx
+    </button>
+  </div>
+</div>
+
+<!-- RFx Filters -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Filters</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 mb-3 mb-md-0">
+            <label for="rfxType" class="form-label">RFx Type</label>
+            <select
+              class="form-select"
+              id="rfxType"
+              (change)="onTypeChange($any($event.target).value)"
+            >
+              <option value="all" selected>All Types</option>
+              <option value="RFP">Request for Proposal (RFP)</option>
+              <option value="RFQ">Request for Quotation (RFQ)</option>
+              <option value="RFI">Request for Information (RFI)</option>
+              <option value="EOI">Expression of Interest (EOI)</option>
+            </select>
+          </div>
+          <div class="col-md-3 mb-3 mb-md-0">
+            <label for="rfxStatus" class="form-label">Status</label>
+            <select
+              class="form-select"
+              id="rfxStatus"
+              (change)="onStatusChange($any($event.target).value)"
+            >
+              <option value="all" selected>All Statuses</option>
+              <option value="Draft">Draft</option>
+              <option value="Pending Approval">Pending Approval</option>
+              <option value="Published">Published</option>
+              <option value="Under Evaluation">Under Evaluation</option>
+              <option value="Awarded">Awarded</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="col-md-3 mb-3 mb-md-0">
+            <label for="rfxCategory" class="form-label">Category</label>
+            <select
+              class="form-select"
+              id="rfxCategory"
+              (change)="onCategoryChange($any($event.target).value)"
+            >
+              <option value="all" selected>All Categories</option>
+              <option value="IT & Technology">IT & Technology</option>
+              <option value="Construction">Construction</option>
+              <option value="Professional Services">
+                Professional Services
+              </option>
+              <option value="Facilities Management">
+                Facilities Management
+              </option>
+              <option value="Office Supplies">Office Supplies</option>
+              <option value="Equipment">Equipment</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="rfxSearch" class="form-label">Search</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="rfxSearch"
+                placeholder="Search RFx..."
+                (input)="onSearch($any($event.target).value)"
+              />
+              <button class="btn btn-outline-secondary" type="button">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RFx List -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div
+        class="card-header bg-light d-flex justify-content-between align-items-center"
+      >
+        <h5 class="card-title mb-0">RFx List</h5>
+        <div class="dropdown">
+          <button
+            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-gear"></i> Actions
+          </button>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="dropdownMenuButton"
+          >
+            <li><a class="dropdown-item" href="#">Bulk Export</a></li>
+            <li><a class="dropdown-item" href="#">Bulk Delete</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#">Import RFx</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th></th>
+                <th>RFx ID</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Publication Date</th>
+                <th>Closing Date</th>
+                <th>Status</th>
+                <th>Responses</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of filteredRfxes">
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" />
+                  </div>
+                </td>
+                <td>{{ r.id }}</td>
+                <td>{{ r.title }}</td>
+                <td>
+                  <span class="badge bg-primary">{{ r.type }}</span>
+                </td>
+                <td>{{ r.category }}</td>
+                <td>{{ r.publicationDate | date : "mediumDate" }}</td>
+                <td>{{ r.closingDate | date : "mediumDate" }}</td>
+                <td>
+                  <span class="badge bg-success">{{ r.status }}</span>
+                </td>
+                <td>{{ r.responses }}</td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-primary">
+                      View
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Edit</a></li>
+                      <li><a class="dropdown-item" href="#">Duplicate</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">View Responses</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item text-danger" href="#">Cancel</a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <nav aria-label="RFx pagination">
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true"
+                >Previous</a
+              >
+            </li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">3</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

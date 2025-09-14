@@ -1,0 +1,389 @@
+/* Main Stylesheet for Sourcing and Tendering Solution
+   Created: April 26, 2025
+*/
+
+:root {
+  /* Color palette */
+  --primary-color: #0056b3;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --white-color: #ffffff;
+
+  /* Typography */
+  --font-family-sans-serif: "Roboto", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+  --font-family-monospace: "Roboto Mono", SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 3rem;
+
+  /* Border radius */
+  --border-radius-sm: 0.2rem;
+  --border-radius-md: 0.25rem;
+  --border-radius-lg: 0.5rem;
+
+  /* Box shadows */
+  --box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --box-shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+/* Global styles */
+body {
+  font-family: var(--font-family-sans-serif);
+  color: var(--dark-color);
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Navbar customization */
+.navbar-brand {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: var(--dark-color);
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link:focus {
+  color: var(--primary-color);
+}
+
+.navbar-light .navbar-nav .active > .nav-link {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* Sidebar */
+.sidebar {
+  min-height: calc(100vh - 56px);
+  background-color: var(--white-color);
+  box-shadow: var(--box-shadow-sm);
+  padding: var(--spacing-md);
+}
+
+.sidebar .nav-link {
+  color: var(--dark-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.sidebar .nav-link:hover {
+  background-color: var(--light-color);
+}
+
+.sidebar .nav-link.active {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+}
+
+.sidebar .nav-link i {
+  margin-right: var(--spacing-sm);
+  width: 20px;
+  text-align: center;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.card-header {
+  background-color: var(--white-color);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  font-weight: 500;
+  border-radius: var(--border-radius-md);
+  padding: 0.5rem 1.25rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Forms */
+.form-control {
+  border-radius: var(--border-radius-md);
+  padding: 0.5rem 0.75rem;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Tables */
+.table {
+  background-color: var(--white-color);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 500;
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Alerts */
+.alert {
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+/* Login page */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-md);
+  padding: var(--spacing-xl);
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Dashboard */
+.dashboard-stats .card {
+  transition: transform 0.3s ease;
+}
+
+.dashboard-stats .card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-stats .card-body {
+  padding: var(--spacing-lg);
+}
+
+.dashboard-stats .stat-icon {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-color);
+}
+
+.dashboard-stats .stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.dashboard-stats .stat-label {
+  color: var(--secondary-color);
+  font-size: 0.875rem;
+}
+
+/* Charts and graphs */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Supplier registration */
+.registration-progress {
+  margin-bottom: var(--spacing-xl);
+}
+
+.registration-progress .progress {
+  height: 8px;
+  margin-bottom: var(--spacing-md);
+}
+
+.registration-step {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.registration-step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--light-color);
+  color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: var(--spacing-sm);
+}
+
+.registration-step.active .registration-step-number {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+}
+
+.registration-step.completed .registration-step-number {
+  background-color: var(--success-color);
+  color: var(--white-color);
+}
+
+/* RFx management */
+.rfx-status {
+  padding: 0.35em 0.65em;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.rfx-status-draft {
+  background-color: #e9ecef;
+  color: var(--secondary-color);
+}
+
+.rfx-status-published {
+  background-color: #cff4fc;
+  color: #055160;
+}
+
+.rfx-status-closed {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.rfx-status-awarded {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+/* Bid evaluation */
+.evaluation-criteria {
+  margin-bottom: var(--spacing-lg);
+}
+
+.criteria-weight {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.supplier-score {
+  font-weight: 600;
+}
+
+/* Contract management */
+.contract-timeline {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--spacing-lg);
+}
+
+.timeline-item:before {
+  content: "";
+  position: absolute;
+  left: -30px;
+  top: 0;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  z-index: 1;
+}
+
+.timeline-item:after {
+  content: "";
+  position: absolute;
+  left: -23px;
+  top: 15px;
+  width: 1px;
+  height: calc(100% - 15px);
+  background-color: #dee2e6;
+}
+
+.timeline-item:last-child:after {
+  display: none;
+}
+
+.timeline-date {
+  font-size: 0.875rem;
+  color: var(--secondary-color);
+  margin-bottom: var(--spacing-xs);
+}
+
+.timeline-title {
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .sidebar {
+    min-height: auto;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .login-card {
+    padding: var(--spacing-lg);
+  }
+
+  .dashboard-stats .card {
+    margin-bottom: var(--spacing-md);
+  }
+}
