@@ -1,1 +1,89 @@
+## ========== Visual Studio / .NET ==========
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug*/
+[Rr]elease*/
+x64/
+x86/
+[Aa][Rr][Mm]*/
+[Aa][Rr][Mm]64*/
+
+# VS cache
 .vs/
+*.dbmdl
+*.dbproj.schemaview
+*.opendb
+*.sdf
+*.cache
+*.pdb
+*.dll
+*.exe
+*.log
+
+# Rider / JetBrains
+.idea/
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# MSBuild junk
+*.nuget.g.props
+*.nuget.g.targets
+project.assets.json
+project.nuget.cache
+*.csproj.FileListAbsolute.txt
+*.AssemblyInfoInputs.cache
+*.CoreCompileInputs.cache
+*.assets.cache
+*.refint
+*.editorconfig
+*.genruntimeconfig.cache
+
+# Logs
+*.tlog
+*.vspscc
+*.vssscc
+*.user
+*.suo
+
+## ========== Angular / Node ==========
+node_modules/
+dist/
+.angular/
+.angular/cache/
+.angular/local/
+.angular/server/
+tmp/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.pnp.*
+package-lock.json
+yarn.lock
+
+## ========== VS Code ==========
+.vscode/
+.history/
+*.code-workspace
+
+## ========== Secrets / Config ==========
+.env
+*.secret.json
+appsettings.Development.json
+appsettings.Local.json
+
+## ========== Project-specific ==========
+/src/WebAdmin/wwwroot/uploads/
+/src/WebAdmin/wwwroot/uploads/SignUpForms/
+/src/WebAPI/wwwroot/FileStorage/
+/src/WebAPI/logs/
+*.ndproj
