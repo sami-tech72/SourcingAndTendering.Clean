@@ -46,6 +46,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 // CORS for Angular dev
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p
+    .WithOrigins("http://10.10.50.58:4200")
     .WithOrigins("http://localhost:4200")
     .AllowAnyHeader()
     .AllowAnyMethod()
@@ -83,6 +84,8 @@ builder.Services
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+
 
 app.UseSwagger();
 app.UseSwaggerUI();

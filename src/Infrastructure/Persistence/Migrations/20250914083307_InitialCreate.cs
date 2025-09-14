@@ -57,18 +57,21 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EstimatedBudget = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    EstimatedBudget = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     HideBudgetFromSuppliers = table.Column<bool>(type: "bit", nullable: false),
                     PublicationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ClosingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Priority = table.Column<int>(type: "int", nullable: false),
                     TenderBondRequired = table.Column<bool>(type: "bit", nullable: false),
+                    BondAmountPercent = table.Column<int>(type: "int", nullable: true),
+                    BondValidityDays = table.Column<int>(type: "int", nullable: true),
                     ContactPerson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -78,7 +81,19 @@ namespace Infrastructure.Persistence.Migrations
                     Deliverables = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Timeline = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MinimumQualifyingScore = table.Column<int>(type: "int", nullable: false),
-                    EvaluationNotes = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    EvaluationNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequiredDocumentsJson = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "[]"),
+                    OtherRequiredDocument = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    UseStandardTerms = table.Column<bool>(type: "bit", nullable: false),
+                    CustomTerms = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TermsFileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    TermsStoragePath = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    PublishOption = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "now"),
+                    SupplierOption = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "all"),
+                    SelectedSupplierIdsJson = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "[]"),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PublicToken = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -300,6 +315,34 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_RfxCommitteeMembers_RfxId",
                 table: "RfxCommitteeMembers",
                 column: "RfxId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rfxes_ClosingDate",
+                table: "Rfxes",
+                column: "ClosingDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rfxes_Code",
+                table: "Rfxes",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rfxes_PublicToken",
+                table: "Rfxes",
+                column: "PublicToken",
+                unique: true,
+                filter: "[PublicToken] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rfxes_Status_ClosingDate",
+                table: "Rfxes",
+                columns: new[] { "Status", "ClosingDate" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rfxes_Type_PublicationDate",
+                table: "Rfxes",
+                columns: new[] { "Type", "PublicationDate" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_RfxEvaluationCriteria_RfxId",

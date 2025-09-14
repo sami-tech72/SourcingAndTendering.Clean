@@ -1,731 +1,598 @@
-<div
-  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
->
-  <h1 class="h2">Create New RFx</h1>
-  <div class="btn-toolbar mb-2 mb-md-0">
-    <div class="btn-group me-2">
-      <button type="button" class="btn btn-sm btn-outline-secondary">
-        Save as Draft
+<!-- Success screen -->
+<div *ngIf="published" class="text-center py-5">
+  <div class="mb-4">
+    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+  </div>
+  <h3 class="mb-3">RFx Published Successfully!</h3>
+  <p class="mb-2">Your RFx has been published and is now visible to suppliers.</p>
+
+  <p class="mb-2" *ngIf="publishedCode">
+    Code: <strong>{{ publishedCode }}</strong>
+  </p>
+  <p class="mb-2" *ngIf="publishedId">
+    RFx ID: <strong>{{ publishedId }}</strong>
+  </p>
+
+  <ng-container *ngIf="publicUrl; else noPublicUrl">
+    <p class="mb-1">Public link:</p>
+    <p class="mb-3">
+      <a [href]="publicUrl" target="_blank" rel="noopener">{{ publicUrl }}</a>
+      <button class="btn btn-sm btn-outline-secondary ms-2" (click)="copyPublicLink()">
+        Copy Link
       </button>
-      <button type="button" class="btn btn-sm btn-outline-secondary">
-        Preview
-      </button>
+    </p>
+    <div class="alert alert-info mx-auto" style="max-width: 720px;">
+      Share this link with suppliers to view the tender without logging in.
+      You can revoke it later by unpublishing.
     </div>
+  </ng-container>
+  <ng-template #noPublicUrl>
+    <div class="alert alert-secondary mx-auto" style="max-width: 720px;">
+      This RFx is not published publicly. Set "Publish immediately" to generate a public link.
+    </div>
+  </ng-template>
+
+  <div class="d-flex justify-content-center gap-3 mt-3">
+    <a routerLink="/procurement/rfx-management" class="btn btn-primary">Go to RFx Management</a>
+    <a routerLink="/procurement/rfx-management/create" class="btn btn-outline-primary">Create Another RFx</a>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card mb-4">
-      <div class="card-body">
-        <!-- Progress -->
-        <div class="registration-progress mb-5">
-          <div class="progress">
-            <div
-              class="progress-bar"
-              role="progressbar"
-              [style.width.%]="step * 25"
-              [attr.aria-valuenow]="step * 25"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            >
-              {{ step * 25 }}%
+<!-- Form wizard -->
+<div *ngIf="!published">
+  <!-- Header + toolbar -->
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Create New RFx</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Save as Draft</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary">Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-body">
+          <!-- Progress -->
+          <div class="registration-progress mb-5">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar"
+                   [style.width.%]="step * 25" [attr.aria-valuenow]="step * 25"
+                   aria-valuemin="0" aria-valuemax="100">
+                {{ step * 25 }}%
+              </div>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+              <div class="registration-step" [class.active]="step === 1">
+                <div class="registration-step-number">1</div><div>Basic Information</div>
+              </div>
+              <div class="registration-step" [class.active]="step === 2">
+                <div class="registration-step-number">2</div><div>Requirements</div>
+              </div>
+              <div class="registration-step" [class.active]="step === 3">
+                <div class="registration-step-number">3</div><div>Evaluation Criteria</div>
+              </div>
+              <div class="registration-step" [class.active]="step === 4">
+                <div class="registration-step-number">4</div><div>Review & Publish</div>
+              </div>
             </div>
           </div>
-          <div class="d-flex justify-content-between mt-2">
-            <div class="registration-step" [class.active]="step === 1">
-              <div class="registration-step-number">1</div>
-              <div>Basic Information</div>
-            </div>
-            <div class="registration-step" [class.active]="step === 2">
-              <div class="registration-step-number">2</div>
-              <div>Requirements</div>
-            </div>
-            <div class="registration-step" [class.active]="step === 3">
-              <div class="registration-step-number">3</div>
-              <div>Evaluation Criteria</div>
-            </div>
-            <div class="registration-step" [class.active]="step === 4">
-              <div class="registration-step-number">4</div>
-              <div>Review & Publish</div>
-            </div>
-          </div>
-        </div>
 
-        <!-- ERROR -->
-        <div *ngIf="error" class="alert alert-warning mb-4">{{ error }}</div>
+          <!-- Error -->
+          <div *ngIf="error" class="alert alert-warning mb-4">{{ error }}</div>
 
-        <!-- STEP 1 -->
-        <div *ngIf="step === 1">
-          <h5 class="mb-4">Basic Information</h5>
-          <form>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">RFx Type*</label>
-                <select
-                  class="form-select"
-                  [(ngModel)]="rfxType"
-                  name="rfxType"
-                  required
-                >
-                  <option value="rfi">Request for Information (RFI)</option>
-                  <option value="rfq">Request for Quotation (RFQ)</option>
-                  <option value="rfp">Request for Proposal (RFP)</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Category*</label>
-                <select
-                  class="form-select"
-                  [(ngModel)]="category"
-                  name="category"
-                  required
-                >
-                  <option value="" disabled>Select category</option>
-                  <option value="Construction">Construction</option>
-                  <option value="IT Services">IT Services</option>
-                  <option value="Maintenance">Maintenance</option>
-                  <option value="Consulting">Consulting</option>
-                  <option value="Office Supplies">Office Supplies</option>
-                  <option value="Facilities Management">
-                    Facilities Management
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Title*</label>
-              <input
-                class="form-control"
-                [(ngModel)]="title"
-                name="title"
-                required
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Description*</label>
-              <textarea
-                class="form-control"
-                rows="3"
-                [(ngModel)]="description"
-                name="description"
-                required
-              ></textarea>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Estimated Budget (QAR)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  [(ngModel)]="estimatedBudget"
-                  name="estimatedBudget"
-                />
-                <div class="form-check mt-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    [(ngModel)]="hideBudget"
-                    name="hideBudget"
-                    id="hideBudget"
-                  />
-                  <label class="form-check-label" for="hideBudget"
-                    >Hide budget from suppliers</label
-                  >
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Department*</label>
-                <select
-                  class="form-select"
-                  [(ngModel)]="department"
-                  name="department"
-                  required
-                >
-                  <option value="" disabled>Select department</option>
-                  <option value="Information Technology">
-                    Information Technology
-                  </option>
-                  <option value="Facilities Management">
-                    Facilities Management
-                  </option>
-                  <option value="Operations">Operations</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Human Resources">Human Resources</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Publication Date*</label>
-                <input
-                  type="date"
-                  class="form-control"
-                  [(ngModel)]="publicationDate"
-                  name="publicationDate"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Closing Date*</label>
-                <input
-                  type="date"
-                  class="form-control"
-                  [(ngModel)]="closingDate"
-                  name="closingDate"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Currency*</label>
-                <select
-                  class="form-select"
-                  [(ngModel)]="currency"
-                  name="currency"
-                  required
-                >
-                  <option value="QAR">Qatari Riyal (QAR)</option>
-                  <option value="USD">US Dollar (USD)</option>
-                  <option value="EUR">Euro (EUR)</option>
-                  <option value="GBP">British Pound (GBP)</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Priority*</label>
-                <select
-                  class="form-select"
-                  [(ngModel)]="priority"
-                  name="priority"
-                  required
-                >
-                  <option [ngValue]="1">Low</option>
-                  <option [ngValue]="2">Medium</option>
-                  <option [ngValue]="3">High</option>
-                  <option [ngValue]="4">Urgent</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Tender Bond Required?</label>
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="tenderBond"
-                  [value]="true"
-                  [(ngModel)]="tenderBondRequired"
-                  id="tbYes"
-                />
-                <label class="form-check-label" for="tbYes">Yes</label>
-              </div>
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="tenderBond"
-                  [value]="false"
-                  [(ngModel)]="tenderBondRequired"
-                  id="tbNo"
-                />
-                <label class="form-check-label" for="tbNo">No</label>
-              </div>
-            </div>
-
-            <div class="mb-3" *ngIf="tenderBondRequired">
-              <div class="row">
+          <!-- STEP 1 -->
+          <div *ngIf="step === 1">
+            <h5 class="mb-4">Basic Information</h5>
+            <form>
+              <div class="row mb-3">
                 <div class="col-md-6">
-                  <label class="form-label">Bond Amount (%)*</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    [(ngModel)]="bondAmountPercent"
-                    name="bondAmountPercent"
-                    min="0"
-                    max="100"
-                  />
+                  <label class="form-label">RFx Type*</label>
+                  <select class="form-select" [(ngModel)]="rfxType" name="rfxType" required>
+                    <option value="rfi">Request for Information (RFI)</option>
+                    <option value="rfq">Request for Quotation (RFQ)</option>
+                    <option value="rfp">Request for Proposal (RFP)</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Bond Validity (days)*</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    [(ngModel)]="bondValidityDays"
-                    name="bondValidityDays"
-                    min="1"
-                  />
+                  <label class="form-label">Category*</label>
+                  <select class="form-select" [(ngModel)]="category" name="category" required>
+                    <option value="" disabled>Select category</option>
+                    <option value="Construction">Construction</option>
+                    <option value="IT Services">IT Services</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Consulting">Consulting</option>
+                    <option value="Office Supplies">Office Supplies</option>
+                    <option value="Facilities Management">Facilities Management</option>
+                  </select>
                 </div>
               </div>
-            </div>
 
-            <h5 class="mt-4 mb-3">Contact Information</h5>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Contact Person*</label>
-                <input
-                  class="form-control"
-                  [(ngModel)]="contactPerson"
-                  name="contactPerson"
-                  required
-                />
+              <div class="mb-3">
+                <label class="form-label">Title*</label>
+                <input class="form-control" [(ngModel)]="title" name="title" required />
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Contact Email*</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  [(ngModel)]="contactEmail"
-                  name="contactEmail"
-                  required
-                />
+
+              <div class="mb-3">
+                <label class="form-label">Description*</label>
+                <textarea class="form-control" rows="3" [(ngModel)]="description" name="description" required></textarea>
               </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Contact Phone*</label>
-                <input
-                  class="form-control"
-                  [(ngModel)]="contactPhone"
-                  name="contactPhone"
-                  required
-                />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Clarification Deadline*</label>
-                <input
-                  type="date"
-                  class="form-control"
-                  [(ngModel)]="clarificationDeadline"
-                  name="clarificationDeadline"
-                  required
-                />
-              </div>
-            </div>
 
-            <div class="d-flex justify-content-between mt-4">
-              <a
-                routerLink="/procurement/rfx-management"
-                class="btn btn-outline-secondary"
-                >Cancel</a
-              >
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="setStep(2)"
-              >
-                Next: Requirements
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- STEP 2 -->
-        <div *ngIf="step === 2">
-          <h5 class="mb-4">Requirements</h5>
-          <form>
-            <div class="mb-4">
-              <label class="form-label">Scope of Work*</label>
-              <textarea
-                class="form-control"
-                rows="5"
-                [(ngModel)]="scopeOfWork"
-                name="scopeOfWork"
-                required
-              ></textarea>
-            </div>
-            <div class="mb-4">
-              <label class="form-label">Technical Specifications*</label>
-              <textarea
-                class="form-control"
-                rows="5"
-                [(ngModel)]="technicalSpecifications"
-                name="technicalSpecifications"
-                required
-              ></textarea>
-            </div>
-            <div class="mb-4">
-              <label class="form-label">Deliverables*</label>
-              <textarea
-                class="form-control"
-                rows="3"
-                [(ngModel)]="deliverables"
-                name="deliverables"
-                required
-              ></textarea>
-            </div>
-            <div class="mb-4">
-              <label class="form-label">Timeline*</label>
-              <textarea
-                class="form-control"
-                rows="3"
-                [(ngModel)]="timeline"
-                name="timeline"
-                required
-              ></textarea>
-            </div>
-
-            <div class="d-flex justify-content-between mt-4">
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                (click)="setStep(1)"
-              >
-                Previous: Basic Information
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="setStep(3)"
-              >
-                Next: Evaluation Criteria
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- STEP 3 -->
-        <div *ngIf="step === 3">
-          <h5 class="mb-4">Evaluation Criteria</h5>
-
-          <div class="alert alert-info mb-4">
-            Define the criteria and assign weights.
-            <strong>Total: {{ totalWeight() }}%</strong>
-          </div>
-
-          <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="mb-0">Technical Criteria</h6>
-              <button
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                (click)="addTechnicalCriterion()"
-              >
-                <i class="bi bi-plus-circle"></i> Add Criterion
-              </button>
-            </div>
-            <div *ngFor="let c of evaluationCriteria; let i = index">
-              <div class="row mb-2" *ngIf="c.category === 'Technical'">
+              <div class="row mb-3">
                 <div class="col-md-6">
-                  <input
-                    class="form-control"
-                    [(ngModel)]="c.name"
-                    [name]="'tech-name-' + i"
-                    placeholder="Criterion name"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <div class="input-group">
-                    <input
-                      type="number"
-                      class="form-control"
-                      [(ngModel)]="c.weightPercent"
-                      [name]="'tech-weight-' + i"
-                      min="0"
-                      max="100"
-                    />
-                    <span class="input-group-text">%</span>
+                  <label class="form-label">Estimated Budget (QAR)</label>
+                  <input type="number" class="form-control" [(ngModel)]="estimatedBudget" name="estimatedBudget" />
+                  <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="hideBudget" name="hideBudget" id="hideBudget" />
+                    <label class="form-check-label" for="hideBudget">Hide budget from suppliers</label>
                   </div>
                 </div>
-                <div class="col-md-2">
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm"
-                    (click)="removeCriterion(i)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
+                <div class="col-md-6">
+                  <label class="form-label">Department*</label>
+                  <select class="form-select" [(ngModel)]="department" name="department" required>
+                    <option value="" disabled>Select department</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Facilities Management">Facilities Management</option>
+                    <option value="Operations">Operations</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Human Resources">Human Resources</option>
+                  </select>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="mb-0">Commercial Criteria</h6>
-              <button
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                (click)="addCommercialCriterion()"
-              >
-                <i class="bi bi-plus-circle"></i> Add Criterion
-              </button>
-            </div>
-            <div *ngFor="let c of evaluationCriteria; let i = index">
-              <div class="row mb-2" *ngIf="c.category === 'Commercial'">
+              <div class="row mb-3">
                 <div class="col-md-6">
-                  <input
-                    class="form-control"
-                    [(ngModel)]="c.name"
-                    [name]="'comm-name-' + i"
-                    placeholder="Criterion name"
-                  />
+                  <label class="form-label">Publication Date*</label>
+                  <input type="date" class="form-control" [(ngModel)]="publicationDate" name="publicationDate" required />
                 </div>
-                <div class="col-md-4">
-                  <div class="input-group">
-                    <input
-                      type="number"
-                      class="form-control"
-                      [(ngModel)]="c.weightPercent"
-                      [name]="'comm-weight-' + i"
-                      min="0"
-                      max="100"
-                    />
-                    <span class="input-group-text">%</span>
+                <div class="col-md-6">
+                  <label class="form-label">Closing Date*</label>
+                  <input type="date" class="form-control" [(ngModel)]="closingDate" name="closingDate" required />
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Currency*</label>
+                  <select class="form-select" [(ngModel)]="currency" name="currency" required>
+                    <option value="QAR">Qatari Riyal (QAR)</option>
+                    <option value="USD">US Dollar (USD)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                    <option value="GBP">British Pound (GBP)</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Priority*</label>
+                  <select class="form-select" [(ngModel)]="priority" name="priority" required>
+                    <option [ngValue]="1">Low</option>
+                    <option [ngValue]="2">Medium</option>
+                    <option [ngValue]="3">High</option>
+                    <option [ngValue]="4">Urgent</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Tender Bond Required?</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tenderBond" [value]="true" [(ngModel)]="tenderBondRequired" id="tbYes" />
+                  <label class="form-check-label" for="tbYes">Yes</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tenderBond" [value]="false" [(ngModel)]="tenderBondRequired" id="tbNo" />
+                  <label class="form-check-label" for="tbNo">No</label>
+                </div>
+              </div>
+
+              <div class="mb-3" *ngIf="tenderBondRequired">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-label">Bond Amount (%)*</label>
+                    <input type="number" class="form-control" [(ngModel)]="bondAmountPercent" name="bondAmountPercent" min="0" max="100" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Bond Validity (days)*</label>
+                    <input type="number" class="form-control" [(ngModel)]="bondValidityDays" name="bondValidityDays" min="1" />
                   </div>
                 </div>
-                <div class="col-md-2">
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm"
-                    (click)="removeCriterion(i)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
+              </div>
+
+              <h5 class="mt-4 mb-3">Contact Information</h5>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Contact Person*</label>
+                  <input class="form-control" [(ngModel)]="contactPerson" name="contactPerson" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Contact Email*</label>
+                  <input type="email" class="form-control" [(ngModel)]="contactEmail" name="contactEmail" required />
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="mb-0">Total Weight</h6>
-              <h6 class="mb-0">{{ totalWeight() }}%</h6>
-            </div>
-            <div class="progress mt-2">
-              <div
-                class="progress-bar"
-                [class.bg-success]="totalWeight() === 100"
-                [class.bg-warning]="totalWeight() < 100"
-                [class.bg-danger]="totalWeight() > 100"
-                role="progressbar"
-                [style.width.%]="totalWeight()"
-                [attr.aria-valuenow]="totalWeight()"
-                aria-valuemin="0"
-                aria-valuemax="100"
-              ></div>
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label">Minimum Qualifying Score (%)</label>
-            <input
-              type="number"
-              class="form-control"
-              [(ngModel)]="minimumQualifyingScore"
-              name="minimumQualifyingScore"
-              min="0"
-              max="100"
-            />
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label">Evaluation Notes</label>
-            <textarea
-              class="form-control"
-              rows="3"
-              [(ngModel)]="evaluationNotes"
-              name="evaluationNotes"
-            ></textarea>
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label">Evaluation Committee Members</label>
-            <div
-              class="row mb-2"
-              *ngFor="let m of committeeMembers; let i = index"
-            >
-              <div class="col-md-5">
-                <input
-                  class="form-control"
-                  [(ngModel)]="m.fullName"
-                  [name]="'m-name-' + i"
-                  placeholder="Name"
-                />
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Contact Phone*</label>
+                  <input class="form-control" [(ngModel)]="contactPhone" name="contactPhone" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Clarification Deadline*</label>
+                  <input type="date" class="form-control" [(ngModel)]="clarificationDeadline" name="clarificationDeadline" required />
+                </div>
               </div>
-              <div class="col-md-5">
-                <input
-                  class="form-control"
-                  [(ngModel)]="m.role"
-                  [name]="'m-role-' + i"
-                  placeholder="Role"
-                />
+
+              <div class="d-flex justify-content-between mt-4">
+                <a routerLink="/procurement/rfx-management" class="btn btn-outline-secondary">Cancel</a>
+                <button type="button" class="btn btn-primary" (click)="setStep(2)">Next: Requirements</button>
               </div>
-              <div class="col-md-2">
-                <button
-                  type="button"
-                  class="btn btn-outline-danger btn-sm"
-                  (click)="removeCommitteeMember(i)"
-                >
-                  <i class="bi bi-trash"></i>
+            </form>
+          </div>
+
+          <!-- STEP 2 -->
+          <div *ngIf="step === 2">
+            <h5 class="mb-4">Requirements</h5>
+            <form>
+              <div class="mb-4">
+                <label class="form-label">Scope of Work*</label>
+                <textarea class="form-control" rows="5" [(ngModel)]="scopeOfWork" name="scopeOfWork" required></textarea>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Technical Specifications*</label>
+                <textarea class="form-control" rows="5" [(ngModel)]="technicalSpecifications" name="technicalSpecifications" required></textarea>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Deliverables*</label>
+                <textarea class="form-control" rows="3" [(ngModel)]="deliverables" name="deliverables" required></textarea>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Timeline*</label>
+                <textarea class="form-control" rows="3" [(ngModel)]="timeline" name="timeline" required></textarea>
+              </div>
+
+              <!-- Required Documents -->
+              <div class="mb-4">
+                <label class="form-label">Required Documents from Suppliers*</label>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="docCompanyProfile" name="docCompanyProfile" id="docCompanyProfile" />
+                  <label class="form-check-label" for="docCompanyProfile">Company Profile</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="docTradeLicense" name="docTradeLicense" id="docTradeLicense" />
+                  <label class="form-check-label" for="docTradeLicense">Trade License</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="docFinancials" name="docFinancials" id="docFinancials" />
+                  <label class="form-check-label" for="docFinancials">Financial Statements</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="docReferences" name="docReferences" id="docReferences" />
+                  <label class="form-check-label" for="docReferences">References/Past Projects</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="docCertifications" name="docCertifications" id="docCertifications" />
+                  <label class="form-check-label" for="docCertifications">Certifications</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="docMethodology" name="docMethodology" id="docMethodology" />
+                  <label class="form-check-label" for="docMethodology">Methodology</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="docOther" name="docOther" id="docOther" />
+                  <label class="form-check-label" for="docOther">Other</label>
+                </div>
+                <div class="mt-2" *ngIf="docOther">
+                  <input type="text" class="form-control" [(ngModel)]="otherDocText" name="otherDocText" placeholder="Specify other required documents" />
+                </div>
+              </div>
+
+              <!-- Attachments -->
+              <div class="mb-4">
+                <label class="form-label">Attachments</label>
+                <div class="alert alert-info">
+                  <i class="bi bi-info-circle-fill me-2"></i>
+                  Upload any supporting documents such as detailed specifications, drawings, or templates.
+                </div>
+                <div class="mb-2" *ngFor="let idx of attachmentInputs; let i = index">
+                  <input class="form-control" type="file" (change)="onAttachmentPicked($event, i)" />
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addAttachmentInput()">
+                  <i class="bi bi-plus-circle"></i> Add More
                 </button>
               </div>
-            </div>
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-sm mt-2"
-              (click)="addCommitteeMember()"
-            >
-              <i class="bi bi-plus-circle"></i> Add Member
-            </button>
+
+              <!-- Terms & Conditions -->
+              <div class="mb-4">
+                <label class="form-label">Terms and Conditions</label>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="useStandardTerms" name="useStandardTerms" id="useStandardTerms" />
+                  <label class="form-check-label" for="useStandardTerms">Use standard UDC terms and conditions</label>
+                </div>
+                <div *ngIf="!useStandardTerms">
+                  <textarea class="form-control mb-2" rows="3" [(ngModel)]="customTerms" name="customTerms" placeholder="Enter custom terms and conditions"></textarea>
+                  <input class="form-control" type="file" (change)="onTermsAttachmentPicked($event)" />
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-outline-secondary" (click)="setStep(1)">
+                  Previous: Basic Information
+                </button>
+                <button type="button" class="btn btn-primary" (click)="setStep(3)">
+                  Next: Evaluation Criteria
+                </button>
+              </div>
+            </form>
           </div>
 
-          <div class="d-flex justify-content-between mt-4">
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              (click)="setStep(2)"
-            >
-              Previous: Requirements
-            </button>
-            <button type="button" class="btn btn-primary" (click)="setStep(4)">
-              Next: Review & Publish
-            </button>
-          </div>
-        </div>
+          <!-- STEP 3 -->
+          <div *ngIf="step === 3">
+            <h5 class="mb-4">Evaluation Criteria</h5>
+            <div class="alert alert-info mb-4">
+              Define the criteria and assign weights. <strong>Total: {{ totalWeight() }}%</strong>
+            </div>
 
-        <!-- STEP 4 -->
-        <div *ngIf="step === 4">
-          <h5 class="mb-4">Review & Publish</h5>
-          <div class="alert alert-warning mb-4">
-            Please review all information carefully before publishing.
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label">Publish Options</label>
-            <div class="form-check mb-2">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="publishOption"
-                [(ngModel)]="publishOption"
-                [value]="'now'"
-                id="publishNow"
-              />
-              <label class="form-check-label" for="publishNow"
-                >Publish immediately</label
-              >
-            </div>
-            <div class="form-check mb-2">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="publishOption"
-                [(ngModel)]="publishOption"
-                [value]="'scheduled'"
-                id="publishScheduled"
-              />
-              <label class="form-check-label" for="publishScheduled"
-                >Publish on scheduled date</label
-              >
-            </div>
-            <div class="form-check mb-2">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="publishOption"
-                [(ngModel)]="publishOption"
-                [value]="'draft'"
-                id="publishDraft"
-              />
-              <label class="form-check-label" for="publishDraft"
-                >Save as draft</label
-              >
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label">Supplier Selection</label>
-            <div class="form-check mb-2">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="supplierOption"
-                [(ngModel)]="supplierOption"
-                [value]="'all'"
-                id="allSuppliers"
-              />
-              <label class="form-check-label" for="allSuppliers"
-                >Open to all registered suppliers in selected category</label
-              >
-            </div>
-            <div class="form-check mb-2">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="supplierOption"
-                [(ngModel)]="supplierOption"
-                [value]="'selected'"
-                id="selectedSuppliers"
-              />
-              <label class="form-check-label" for="selectedSuppliers"
-                >Invite specific suppliers only</label
-              >
-            </div>
-            <div *ngIf="supplierOption === 'selected'">
-              <select
-                class="form-select"
-                multiple
-                size="5"
-                [(ngModel)]="selectedSupplierIds"
-                name="selectedSuppliersList"
-              >
-                <option value="1">Gulf Technical Services</option>
-                <option value="2">Qatar IT Solutions</option>
-                <option value="3">Al Jaber Engineering</option>
-                <option value="4">Tech Innovators LLC</option>
-                <option value="5">Pearl Consulting Group</option>
-              </select>
-              <div class="form-text">
-                Hold Ctrl/Cmd to select multiple suppliers.
+            <!-- Technical -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Technical Criteria</h6>
+                <button type="button" class="btn btn-outline-primary btn-sm" (click)="addTechnicalCriterion()">
+                  <i class="bi bi-plus-circle"></i> Add Criterion
+                </button>
+              </div>
+              <div *ngFor="let c of evaluationCriteria; let i = index">
+                <div class="row mb-2" *ngIf="c.category === 'Technical'">
+                  <div class="col-md-6">
+                    <input class="form-control" [(ngModel)]="c.name" [name]="'tech-name-' + i" placeholder="Criterion name" />
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group">
+                      <input type="number" class="form-control" [(ngModel)]="c.weightPercent" [name]="'tech-weight-' + i" min="0" max="100" />
+                      <span class="input-group-text">%</span>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeCriterion(i)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="mb-4">
-            <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="approvalCheck"
-                [(ngModel)]="approvalChecked"
-                name="approvalCheck"
-              />
-              <label class="form-check-label" for="approvalCheck">
-                I confirm the information is accurate and I have authority to
-                publish this RFx.
-              </label>
+            <!-- Commercial -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Commercial Criteria</h6>
+                <button type="button" class="btn btn-outline-primary btn-sm" (click)="addCommercialCriterion()">
+                  <i class="bi bi-plus-circle"></i> Add Criterion
+                </button>
+              </div>
+              <div *ngFor="let c of evaluationCriteria; let i = index">
+                <div class="row mb-2" *ngIf="c.category === 'Commercial'">
+                  <div class="col-md-6">
+                    <input class="form-control" [(ngModel)]="c.name" [name]="'comm-name-' + i" placeholder="Criterion name" />
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group">
+                      <input type="number" class="form-control" [(ngModel)]="c.weightPercent" [name]="'comm-weight-' + i" min="0" max="100" />
+                      <span class="input-group-text">%</span>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeCriterion(i)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Total -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Total Weight</h6>
+                <h6 class="mb-0">{{ totalWeight() }}%</h6>
+              </div>
+              <div class="progress mt-2">
+                <div class="progress-bar"
+                     [class.bg-success]="totalWeight() === 100"
+                     [class.bg-warning]="totalWeight() < 100"
+                     [class.bg-danger]="totalWeight() > 100"
+                     role="progressbar"
+                     [style.width.%]="totalWeight()"
+                     [attr.aria-valuenow]="totalWeight()"
+                     aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Minimum Qualifying Score (%)</label>
+              <input type="number" class="form-control" [(ngModel)]="minimumQualifyingScore" name="minimumQualifyingScore" min="0" max="100" />
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Evaluation Notes</label>
+              <textarea class="form-control" rows="3" [(ngModel)]="evaluationNotes" name="evaluationNotes"></textarea>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Evaluation Committee Members</label>
+              <div class="row mb-2" *ngFor="let m of committeeMembers; let i = index">
+                <div class="col-md-5">
+                  <input class="form-control" [(ngModel)]="m.fullName" [name]="'m-name-' + i" placeholder="Name" />
+                </div>
+                <div class="col-md-5">
+                  <input class="form-control" [(ngModel)]="m.role" [name]="'m-role-' + i" placeholder="Role" />
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeCommitteeMember(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-secondary btn-sm mt-2" (click)="addCommitteeMember()">
+                <i class="bi bi-plus-circle"></i> Add Member
+              </button>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <button type="button" class="btn btn-outline-secondary" (click)="setStep(2)">Previous: Requirements</button>
+              <button type="button" class="btn btn-primary" (click)="setStep(4)">Next: Review & Publish</button>
             </div>
           </div>
 
-          <div class="d-flex justify-content-between mt-4">
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              (click)="setStep(3)"
-            >
-              Previous: Evaluation Criteria
-            </button>
-            <button
-              type="button"
-              class="btn btn-success"
-              [disabled]="loading"
-              (click)="publishRfx()"
-            >
-              <span *ngIf="!loading">Publish RFx</span>
-              <span
-                *ngIf="loading"
-                class="spinner-border spinner-border-sm"
-              ></span>
-            </button>
-          </div>
-        </div>
+          <!-- STEP 4 – Review & Publish -->
+          <div *ngIf="step === 4">
+            <h5 class="mb-4">Review & Publish</h5>
+            <div class="alert alert-warning mb-4">
+              Please review all information carefully before publishing.
+            </div>
+
+            <!-- Basic Information card -->
+            <div class="card mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Basic Information</h6>
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="setStep(1)">Edit</button>
+              </div>
+              <div class="card-body">
+                <div class="row mb-2"><div class="col-md-3 fw-bold">RFx Type:</div><div class="col-md-9">
+                  {{ rfxType === 'rfi' ? 'Request for Information (RFI)' :
+                     rfxType === 'rfq' ? 'Request for Quotation (RFQ)' :
+                     'Request for Proposal (RFP)' }}
+                </div></div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Title:</div><div class="col-md-9">{{ title }}</div></div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Category:</div><div class="col-md-9">{{ category }}</div></div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Department:</div><div class="col-md-9">{{ department }}</div></div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Publication Date:</div><div class="col-md-9">{{ publicationDate }}</div></div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Closing Date:</div><div class="col-md-9">{{ closingDate }}</div></div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Contact Person:</div><div class="col-md-9">{{ contactPerson }}</div></div>
+              </div>
+            </div>
+
+            <!-- Requirements card -->
+            <div class="card mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Requirements</h6>
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="setStep(2)">Edit</button>
+              </div>
+              <div class="card-body">
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Scope of Work:</div><div class="col-md-9">{{ scopeOfWork }}</div></div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Required Documents:</div>
+                  <div class="col-md-9">
+                    <ul class="mb-0">
+                      <li *ngFor="let d of requiredDocsList()">{{ d }}</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Attachments:</div>
+                  <div class="col-md-9">
+                    <ul class="mb-0">
+                      <li *ngFor="let a of attachments">{{ a.fileName }}</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Terms & Conditions:</div>
+                  <div class="col-md-9">
+                    <ng-container *ngIf="useStandardTerms; else customT">
+                      Standard UDC terms and conditions.
+                    </ng-container>
+                    <ng-template #customT>
+                      <div *ngIf="customTerms">{{ customTerms }}</div>
+                      <div *ngIf="termsAttachment">Attachment: {{ termsAttachment.fileName }}</div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Evaluation card -->
+            <div class="card mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Evaluation Criteria</h6>
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="setStep(3)">Edit</button>
+              </div>
+              <div class="card-body">
+                <div class="row mb-2">
+                  <div class="col-md-3 fw-bold">Technical Criteria:</div>
+                  <div class="col-md-9">
+                    <ul class="mb-0">
+                      <li *ngFor="let t of evaluationCriteria" [hidden]="t.category !== 'Technical'">
+                        {{ t.name }} ({{ t.weightPercent }}%)
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-md-3 fw-bold">Commercial Criteria:</div>
+                  <div class="col-md-9">
+                    <ul class="mb-0">
+                      <li *ngFor="let c of evaluationCriteria" [hidden]="c.category !== 'Commercial'">
+                        {{ c.name }} ({{ c.weightPercent }}%)
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row mb-2"><div class="col-md-3 fw-bold">Minimum Score:</div><div class="col-md-9">{{ minimumQualifyingScore }}%</div></div>
+              </div>
+            </div>
+
+            <!-- Publish options -->
+            <div class="mb-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="approvalCheck" [(ngModel)]="approvalChecked" name="approvalCheck" />
+                <label class="form-check-label" for="approvalCheck">
+                  I confirm that all information is accurate and I have authority to publish this RFx.
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Publish Options</label>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="publishOption" [(ngModel)]="publishOption" [value]="'now'" id="publishNow" />
+                <label class="form-check-label" for="publishNow">Publish immediately</label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="publishOption" [(ngModel)]="publishOption" [value]="'scheduled'" id="publishScheduled" />
+                <label class="form-check-label" for="publishScheduled">Publish on scheduled date</label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="publishOption" [(ngModel)]="publishOption" [value]="'draft'" id="publishDraft" />
+                <label class="form-check-label" for="publishDraft">Save as draft</label>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Supplier Selection</label>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="supplierOption" [(ngModel)]="supplierOption" [value]="'all'" id="allSuppliers" />
+                <label class="form-check-label" for="allSuppliers">Open to all registered suppliers in selected category</label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="supplierOption" [(ngModel)]="supplierOption" [value]="'selected'" id="selectedSuppliers" />
+                <label class="form-check-label" for="selectedSuppliers">Invite specific suppliers only</label>
+              </div>
+              <div *ngIf="supplierOption === 'selected'">
+                <select class="form-select" multiple size="5" [(ngModel)]="selectedSupplierIds" name="selectedSuppliersList">
+                  <option value="1">Gulf Technical Services</option>
+                  <option value="2">Qatar IT Solutions</option>
+                  <option value="3">Al Jaber Engineering</option>
+                  <option value="4">Tech Innovators LLC</option>
+                  <option value="5">Pearl Consulting Group</option>
+                </select>
+                <div class="form-text">Hold Ctrl/Cmd to select multiple suppliers.</div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <button type="button" class="btn btn-outline-secondary" (click)="setStep(3)">Previous: Evaluation Criteria</button>
+              <button type="button" class="btn btn-success" [disabled]="loading" (click)="publishRfx()">
+                <span *ngIf="!loading">Publish RFx</span>
+                <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+              </button>
+            </div>
+          </div><!-- /STEP 4 -->
+        </div><!-- /card-body -->
       </div>
     </div>
   </div>

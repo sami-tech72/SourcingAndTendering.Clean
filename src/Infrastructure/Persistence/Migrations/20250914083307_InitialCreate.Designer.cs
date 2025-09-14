@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250914040707_InitialCreate")]
+    [Migration("20250914083307_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,15 +31,27 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("BondAmountPercent")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BondValidityDays")
+                        .HasColumnType("int");
+
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<DateTime?>("ClarificationDeadline")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ClosingDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<string>("ContactEmail")
                         .IsRequired()
@@ -55,6 +67,10 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Currency")
                         .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("CustomTerms")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Deliverables")
@@ -62,13 +78,14 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Department")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("EstimatedBudget")
+                    b.Property<decimal?>("EstimatedBudget")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("EvaluationNotes")
@@ -80,20 +97,70 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("MinimumQualifyingScore")
                         .HasColumnType("int");
 
+                    b.Property<string>("OtherRequiredDocument")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<int>("Priority")
                         .HasColumnType("int");
+
+                    b.Property<string>("PublicToken")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PublishOption")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("now");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequiredDocumentsJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("[]");
+
                     b.Property<string>("ScopeOfWork")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SelectedSupplierIdsJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("[]");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("SupplierOption")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("all");
 
                     b.Property<string>("TechnicalSpecifications")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TenderBondRequired")
                         .HasColumnType("bit");
+
+                    b.Property<string>("TermsFileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TermsStoragePath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");
@@ -106,7 +173,23 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
+                    b.Property<bool>("UseStandardTerms")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ClosingDate");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("PublicToken")
+                        .IsUnique()
+                        .HasFilter("[PublicToken] IS NOT NULL");
+
+                    b.HasIndex("Status", "ClosingDate");
+
+                    b.HasIndex("Type", "PublicationDate");
 
                     b.ToTable("Rfxes");
                 });

@@ -8,6 +8,16 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/login.component').then((m) => m.LoginComponent),
   },
+   // 2) Public tender (unguarded, BEFORE guarded block)
+  {
+    path: 'tenders/:token',
+    // If you want a minimal public layout, lazy-load that component instead.
+    loadComponent: () =>
+      import('./features/public/tender-public-view.component')
+        .then(m => m.TenderPublicViewComponent),
+    // Optional: route data if you want different header title, etc.
+    data: { public: true }
+  },
   {
     path: '',
     component: LayoutComponent,
@@ -40,6 +50,7 @@ export const routes: Routes = [
             './features/procurement/rfx-management/create-new-rfx/create-new-rfx.component'
           ).then((m) => m.CreateNewRfxComponent),
       },
+      
       {
         path: 'admin',
         canMatch: [roleGuard],

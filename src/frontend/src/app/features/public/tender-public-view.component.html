@@ -1,0 +1,184 @@
+<div class="container-lg my-4" *ngIf="!loading && data as d; else loadingOrError">
+  <!-- Title + meta -->
+  <div class="d-flex flex-wrap align-items-start justify-content-between mb-3">
+    <div>
+      <h2 class="mb-1">{{ d.title }}</h2>
+      <div class="text-muted">
+        <span class="badge text-bg-light me-2">{{ d.type }}</span>
+        <span class="me-2">{{ d.category }}</span>
+        <span class="text-muted">{{ d.department }}</span>
+      </div>
+    </div>
+
+    <!-- views / live viewers (optional if backend doesn’t send) -->
+    <div class="d-flex align-items-center gap-3 mt-2 mt-md-0" *ngIf="d.views || d.activeViewers?.length">
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtle" *ngIf="d.views">
+        <i class="bi bi-eye me-1"></i>{{ d.views }} views
+      </span>
+      <div class="viewer-avatars d-flex" *ngIf="d.activeViewers?.length">
+        <img *ngFor="let v of d.activeViewers; let i = index; trackBy: trackByIndex"
+             [src]="v.avatarUrl" [alt]="v.name" class="avatar" [ngStyle]="{'z-index': 10 - i}">
+      </div>
+      <span class="text-muted small d-none d-sm-inline" *ngIf="d.activeViewers?.length">Suppliers viewing now</span>
+    </div>
+  </div>
+
+  <!-- Key facts -->
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <div class="label">Code</div>
+          <div class="value">{{ d.code }}</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="label">Publication</div>
+          <div class="value">{{ d.publicationDate | date:'mediumDate' }}</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="label">Closing</div>
+          <div class="value">{{ d.closingDate | date:'mediumDate' }}</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="label">Budget</div>
+          <div class="value">
+            {{ d.estimatedBudget == null ? 'Hidden' : (d.estimatedBudget | number:'1.0-2') + ' ' + d.currency }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content two-column -->
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <h5>Description</h5>
+          <p class="mb-0">{{ d.description }}</p>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3" *ngIf="d.scopeOfWork || d.technicalSpecifications || d.deliverables || d.timeline">
+        <div class="card-body">
+          <h5 class="mb-3">Requirements</h5>
+          <div *ngIf="d.scopeOfWork" class="mb-2">
+            <div class="sub-label">Scope of Work</div>
+            <p class="mb-0">{{ d.scopeOfWork }}</p>
+          </div>
+          <div *ngIf="d.technicalSpecifications" class="mb-2">
+            <div class="sub-label">Technical Specifications</div>
+            <p class="mb-0">{{ d.technicalSpecifications }}</p>
+          </div>
+          <div *ngIf="d.deliverables" class="mb-2">
+            <div class="sub-label">Deliverables</div>
+            <p class="mb-0">{{ d.deliverables }}</p>
+          </div>
+          <div *ngIf="d.timeline" class="mb-0">
+            <div class="sub-label">Timeline</div>
+            <p class="mb-0">{{ d.timeline }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3" *ngIf="d.requiredDocuments?.length || d.otherRequiredDocument">
+        <div class="card-body">
+          <h5 class="mb-3">Required Documents</h5>
+          <ul class="mb-0">
+            <li *ngFor="let doc of d.requiredDocuments; trackBy: trackByIndex">{{ doc }}</li>
+            <li *ngIf="d.otherRequiredDocument">{{ d.otherRequiredDocument }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <h5 class="mb-2">Evaluation</h5>
+          <p class="mb-2">Minimum qualifying score: <strong>{{ d.minimumQualifyingScore }}%</strong></p>
+          <ul class="mb-0">
+            <li *ngFor="let c of d.evaluationCriteria; trackBy: trackByIndex">
+              {{ c.category }} – {{ c.name }} ({{ c.weightPercent }}%)
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <h5 class="mb-2">Terms & Conditions</h5>
+          <ng-container *ngIf="d.useStandardTerms; else customTerms">
+            <div>Standard UDC terms and conditions apply.</div>
+          </ng-container>
+          <ng-template #customTerms>
+            <div *ngIf="d.customTerms; else noTerms">{{ d.customTerms }}</div>
+            <ng-template #noTerms><em>No terms provided.</em></ng-template>
+          </ng-template>
+        </div>
+      </div>
+
+      <div class="card shadow-sm" *ngIf="d.attachments?.length">
+        <div class="card-body">
+          <h5 class="mb-3">Attachments</h5>
+
+          <!-- Image grid -->
+          <div class="row g-3 mb-2" *ngIf="hasImages(d.attachments)">
+            <div class="col-6 col-md-4 col-xl-3" *ngFor="let a of d.attachments; trackBy: trackByFileName">
+              <ng-container *ngIf="isImage(a); else nonImageThumb">
+                <div class="thumb" (click)="openImage(getUrl(a))" role="button" [title]="a.fileName">
+                  <img [src]="getUrl(a)" [alt]="a.fileName" class="img-fluid rounded">
+                </div>
+                <div class="small mt-1 text-truncate">{{ a.fileName }}</div>
+              </ng-container>
+              <ng-template #nonImageThumb></ng-template>
+            </div>
+          </div>
+
+          <!-- Non-image list -->
+          <ul class="mb-0" *ngIf="hasNonImages(d.attachments)">
+            <li *ngFor="let a of d.attachments; trackBy: trackByFileName" class="mb-1" [class.d-none]="isImage(a)">
+              <i class="bi bi-paperclip me-1"></i>
+              <a [href]="getUrl(a)" target="_blank" rel="noopener">{{ a.fileName }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: contact / CTA -->
+    <div class="col-lg-4">
+      <div class="card sticky-md-top shadow-sm" style="top: 1rem;">
+        <div class="card-body">
+          <h6 class="text-muted">Contact</h6>
+          <div class="mb-1">{{ d.contactPerson }}</div>
+          <div class="mb-1">{{ d.contactEmail }}</div>
+          <div class="mb-3">{{ d.contactPhone }}</div>
+          <a class="btn btn-primary w-100"><i class="bi bi-cloud-arrow-up me-1"></i> Submit Proposal</a>
+          <small class="text-muted d-block mt-2">Sign in required to submit.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading / Error -->
+<ng-template #loadingOrError>
+  <div class="container-lg my-5">
+    <div *ngIf="loading" class="text-muted">Loading…</div>
+    <div *ngIf="!loading && error" class="alert alert-warning">{{ error }}</div>
+  </div>
+</ng-template>
+
+<!-- Lightbox Modal for images -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <img *ngIf="modalImageUrl" [src]="modalImageUrl" class="w-100" alt="preview">
+      </div>
+      <div class="modal-footer justify-content-between">
+        <span class="text-truncate small">{{ modalImageUrl }}</span>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

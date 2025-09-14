@@ -1,10 +1,10 @@
 export interface RfxListItem {
   id: string;
   title: string;
-  type: string; // "RFP" | "RFQ" | "RFI" | "EOI" | etc
+  type: number;          // 1..4
   category: string;
-  publicationDate: string; // ISO
-  closingDate: string; // ISO
-  status?: string; // optional
-  responses?: number; // optional
+  department: string;
+  closingDate: string;   // ISO
+  priority: number;      // 1..4
+  status: number;        // enum index
 }

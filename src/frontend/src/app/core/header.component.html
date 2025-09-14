@@ -1,72 +1,71 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="javascript:void(0)">
       <img src="../img/udc-logo.png" alt="UDC Logo" height="40" class="me-2" />
       <span class="d-none d-sm-inline">Sourcing & Tendering</span>
     </a>
-    <button class="navbar-toggler" type="button" id="sidebar-toggle">
+
+    <button class="navbar-toggler" type="button" id="sidebar-toggle" aria-label="Toggle sidebar">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
+
+        <!-- Notifications -->
+        <li class="nav-item dropdown" [class.show]="isNotifOpen">
+          <button
+            class="nav-link dropdown-toggle btn btn-link position-relative"
             id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+            type="button"
+            (click)="toggleNotifDropdown($event)"
+            [attr.aria-expanded]="isNotifOpen"
           >
             <i class="bi bi-bell"></i>
-            <span
-              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-            >
-              3
-            </span>
-          </a>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+          </button>
+
           <ul
             class="dropdown-menu dropdown-menu-end"
             aria-labelledby="navbarDropdown"
+            [class.show]="isNotifOpen"
+            [style.display]="isNotifOpen ? 'block' : null"
           >
-            <li>
-              <a class="dropdown-item" href="#">New RFP approval required</a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="#"
-                >Tender submission deadline today</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="#">5 new supplier registrations</a>
-            </li>
+            <li><a class="dropdown-item" href="javascript:void(0)">New RFP approval required</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)">Tender submission deadline today</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)">5 new supplier registrations</a></li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a class="dropdown-item" href="#">View all notifications</a>
-            </li>
+            <li><a class="dropdown-item" href="javascript:void(0)">View all notifications</a></li>
           </ul>
         </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
+
+        <!-- User -->
+        <li class="nav-item dropdown" [class.show]="isUserOpen">
+          <button
+            class="nav-link dropdown-toggle btn btn-link"
             id="userDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+            type="button"
+            (click)="toggleUserDropdown($event)"
+            [attr.aria-expanded]="isUserOpen"
           >
             <i class="bi bi-person-circle"></i> John Smith
-          </a>
+          </button>
+
           <ul
             class="dropdown-menu dropdown-menu-end"
             aria-labelledby="userDropdown"
+            [class.show]="isUserOpen"
+            [style.display]="isUserOpen ? 'block' : null"
           >
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)">Profile</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)">Settings</a></li>
             <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="../index.html">Logout</a></li>
+            <li>
+              <button class="dropdown-item" type="button" (click)="logout()">Logout</button>
+            </li>
           </ul>
         </li>
+
       </ul>
     </div>
   </div>
